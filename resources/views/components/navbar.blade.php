@@ -29,15 +29,18 @@
                 {{-- BARU: Link Profil Pengguna (Desktop) --}}
                 {{-- ======================================================= --}}
                 @php
-                    // Logika untuk mendapatkan URL foto profil
-                    $defaultPhotoPath = 'profile-photos/default.jpg';
-                    $userPhotoPath = Auth::user()->profile?->foto_profil;
-                    $photoUrl = asset('images/placeholder.png'); // Fallback
-
-                    if ($userPhotoPath && Storage::disk('public')->exists($userPhotoPath)) {
-                        $photoUrl = Storage::url($userPhotoPath);
-                    } elseif (Storage::disk('public')->exists($defaultPhotoPath)) {
-                        $photoUrl = Storage::url($defaultPhotoPath);
+                    $userPhotoPath = Auth::user()->profile?->foto_profil; // Path dari DB, misal: 'profile-photos/foto.jpg'
+                    $defaultPhotoPath = 'profile-photos/default.jpg';    // Path default Anda
+        
+                    if ($userPhotoPath && file_exists(public_path($userPhotoPath))) {
+                        // 1. Gunakan foto spesifik user jika ada di folder public
+                        $photoUrl = asset($userPhotoPath);
+                    } else if (file_exists(public_path($defaultPhotoPath))) {
+                        // 2. Jika tidak ada, gunakan foto default dari folder public
+                        $photoUrl = asset($defaultPhotoPath);
+                    } else {
+                        // 3. Jika semua gagal, gunakan placeholder lama
+                        $photoUrl = asset('images/placeholder.png'); 
                     }
                 @endphp
                 
