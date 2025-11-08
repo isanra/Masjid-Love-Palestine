@@ -23,7 +23,7 @@ Route::post('/contact', [WelcomeController::class, 'storeContactMessage'])->name
 Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
 Route::get('/user-profile/{user}', [ProfileController::class, 'show'])->name('user-profile.show');
 
-Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
+
 // --- Rute yang Membutuhkan Login ---
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -64,5 +64,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::get('/dashboard/profile-edit', ...) <-- Hapus ini
 });
 
+
+Route::get('/posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
 // --- Rute Autentikasi Bawaan Breeze ---
 require __DIR__.'/auth.php';
