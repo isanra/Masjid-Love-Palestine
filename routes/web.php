@@ -51,7 +51,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // --- Fitur Postingan ---
-    Route::resource('posts', PostController::class); // Sudah termasuk posts.show, posts.create, dll.
+    Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+    Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::post('/posts/{post}/like', [PostController::class, 'toggleLike'])->name('posts.like');
     Route::post('/posts/{post}/save', [PostController::class, 'toggleSave'])->name('posts.save');
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
