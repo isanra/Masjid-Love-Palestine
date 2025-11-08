@@ -31,10 +31,10 @@
                 <p class="text-gray-600">Kelola dan pantau performa artikel Anda</p>
               </div>
               <div class="self-end md:self-auto md:ml-auto">
-                <button class="dashboard-button dashboard-button-primary mt-4 md:mt-0 w-fit flex items-center gap-2">
+                <a href="{{ route('posts.create') }}" class="dashboard-button dashboard-button-primary mt-4 md:mt-0 w-fit flex items-center gap-2 no-underline"> {{-- Tambah no-underline jika perlu --}}
                   <i class="fas fa-plus dashboard-button-icon"></i>
                   <span>Buat Artikel Baru</span>
-                </button>
+                </a>
               </div>
             </div>
           </div>
@@ -46,7 +46,7 @@
               <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <i class="fas fa-newspaper text-green-600 text-xl"></i>
               </div>
-              <p class="text-2xl font-bold text-gray-900">24</p>
+              <p class="text-2xl font-bold text-gray-900">{{ $posts->count() ?? 0 }}</p>
               <p class="text-sm text-gray-600">Total Artikel</p>
             </div>
             
@@ -54,7 +54,7 @@
               <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <i class="fas fa-eye text-blue-600 text-xl"></i>
               </div>
-              <p class="text-2xl font-bold text-gray-900">4.8K</p>
+              <p class="text-2xl font-bold text-gray-900">{{ $posts->sum('views_count') ?? 0 }}</p>
               <p class="text-sm text-gray-600">Total Views</p>
             </div>
             
@@ -62,7 +62,7 @@
               <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <i class="fas fa-heart text-red-600 text-xl"></i>
               </div>
-              <p class="text-2xl font-bold text-gray-900">1.2K</p>
+              <p class="text-2xl font-bold text-gray-900">{{ number_format($posts->sum('likes_count')) ?? 0 }}</p>
               <p class="text-sm text-gray-600">Total Likes</p>
             </div>
             
@@ -70,141 +70,117 @@
               <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
                 <i class="fas fa-share text-amber-600 text-xl"></i>
               </div>
-              <p class="text-2xl font-bold text-gray-900">356</p>
+              <p class="text-2xl font-bold text-gray-900">{{ number_format($totalShares) ?? 0 }}</p>
               <p class="text-sm text-gray-600">Total Shares</p>
             </div>
           </div>
 
           <!-- Top 3 Articles Section -->
-          <div class="mb-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Artikel Paling Populer</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <!-- Top 1 Article -->
-              <div class="dashboard-card relative">
-                <span class="absolute -top-2 -right-2 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                  #1 Top
-                </span>
-                <div class="flex justify-between items-start mb-4">
-                  <span class="dashboard-badge-premium">Humanitarian Crisis</span>
-                  <div class="unggahan-dropdown">
-                    <button class="unggahan-dropdown-toggle" onclick="unggahanToggleDropdown(this)">
-                      <i class="fas fa-ellipsis-v text-gray-400 hover:text-gray-600"></i>
-                    </button>
-                    <div class="unggahan-dropdown-menu">
-                      <div class="unggahan-dropdown-item" onclick="unggahanEditArticle(1)">
-                        <i class="fas fa-edit unggahan-dropdown-icon"></i>Edit
-                      </div>
-                      <div class="unggahan-dropdown-item unggahan-dropdown-danger" onclick="unggahanDeleteArticle(1)">
-                        <i class="fas fa-trash unggahan-dropdown-icon"></i>Hapus
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-3">International Aid Reaches Gaza</h3>
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">First humanitarian convoy in weeks enters Gaza through Rafah crossing amid ceasefire negotiations.</p>
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                  <div class="flex items-center space-x-4">
-                    <span class="flex items-center">
-                      <i class="far fa-eye mr-1"></i> 1.2K
-                    </span>
-                    <span class="flex items-center">
-                      <i class="far fa-heart mr-1"></i> 245
-                    </span>
-                  </div>
-                  <span>Today</span>
-                </div>
-              </div>
+          <div class="mb-12"> {{-- Tambah margin bawah --}}
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Konten Paling Populer</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              @php
+                // Warna untuk badge ranking
+                $rankColors = ['bg-amber-500', 'bg-gray-400', 'bg-amber-700'];
+              @endphp
+              
+              {{-- GANTI $posts menjadi $popularPost --}}
+              @forelse ($popularPosts as $popularPost) 
+                <div class="dashboard-card relative flex flex-col"> {{-- Tambah flex flex-col --}}
+                  {{-- Badge Ranking --}}
+                  <span class="absolute -top-3 -right-3 h-10 w-10 flex items-center justify-center font-bold text-white rounded-full shadow-md {{ $rankColors[$loop->index] ?? 'bg-gray-400' }}">
+                      #{{ $loop->iteration }}
+                  </span>
 
-              <!-- Top 2 Article -->
-              <div class="dashboard-card relative">
-                <span class="absolute -top-2 -right-2 bg-gray-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                  #2 Top
-                </span>
-                <div class="flex justify-between items-start mb-4">
-                  <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Education</span>
-                  <div class="unggahan-dropdown">
-                    <button class="unggahan-dropdown-toggle" onclick="unggahanToggleDropdown(this)">
-                      <i class="fas fa-ellipsis-v text-gray-400 hover:text-gray-600"></i>
-                    </button>
-                    <div class="unggahan-dropdown-menu">
-                      <div class="unggahan-dropdown-item" onclick="unggahanEditArticle(2)">
-                        <i class="fas fa-edit unggahan-dropdown-icon"></i>Edit
-                      </div>
-                      <div class="unggahan-dropdown-item unggahan-dropdown-danger" onclick="unggahanDeleteArticle(2)">
-                        <i class="fas fa-trash unggahan-dropdown-icon"></i>Hapus
+                  <div class="flex justify-between items-start mb-4">
+                    {{-- Gunakan $popularPost --}}
+                    <span class="dashboard-badge-premium">{{ explode(',', $popularPost->topik_utama)[0] }}</span> 
+                    <div class="unggahan-dropdown relative">
+                      <button class="unggahan-dropdown-toggle" onclick="unggahanToggleDropdown(this)">
+                        <i class="fas fa-ellipsis-v text-gray-400 hover:text-gray-600"></i>
+                      </button>
+                      <div class="unggahan-dropdown-menu hidden absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg z-10 border">
+                        {{-- Gunakan $popularPost --}}
+                        <a href="{{ route('posts.edit', $popularPost) }}" class="unggahan-dropdown-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"> 
+                          <i class="fas fa-edit unggahan-dropdown-icon mr-2"></i>Edit
+                        </a>
+                        {{-- Gunakan $popularPost --}}
+                        <form action="{{ route('posts.destroy', $popularPost) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menghapus konten ini?');" class="w-full"> 
+                          @csrf
+                          @method('DELETE')
+                          <button type="submit" class="unggahan-dropdown-item unggahan-dropdown-danger block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                              <i class="fas fa-trash unggahan-dropdown-icon mr-2"></i>Hapus
+                          </button>
+                        </form>
                       </div>
                     </div>
                   </div>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-3">Schools Reopening in West Bank</h3>
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">After months of closure, educational institutions resume operations with UN support.</p>
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                  <div class="flex items-center space-x-4">
-                    <span class="flex items-center">
-                      <i class="far fa-eye mr-1"></i> 980
-                    </span>
-                    <span class="flex items-center">
-                      <i class="far fa-heart mr-1"></i> 187
-                    </span>
+                  {{-- Gunakan $popularPost --}}
+                  <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2">
+                    <a href="{{ route('posts.show', $popularPost) }}" class="hover:text-indigo-600">
+                        {{ $popularPost->judul }} 
+                    </a>
+                  </h3>
+                  {{-- Gunakan $popularPost --}}
+                  <p class="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3 flex-grow"> 
+                    {{ Str::words(strip_tags($popularPost->isi), 15, '...') }}
+                  </p>
+                  {{-- Gunakan $popularPost --}}
+                  <div class="flex items-center justify-between text-sm text-gray-500 mt-auto pt-4 border-t border-gray-100"> 
+                    <div class="flex items-center space-x-4">
+                      <span class="flex items-center" title="Views">
+                        <i class="far fa-eye mr-1"></i> {{ $popularPost->views_count ?? 0 }} 
+                      </span>
+                      <span class="flex items-center" title="Likes">
+                        <i class="far fa-heart mr-1"></i> {{ $popularPost->likes_count ?? 0 }} 
+                      </span>
+                    </div>
+                    <span>{{ $popularPost->created_at->diffForHumans() }}</span> 
                   </div>
-                  <span>2 days ago</span>
                 </div>
+                @empty
+              <div class="md:col-span-3 text-center py-8 text-gray-500 bg-gray-50 rounded-lg">
+                  <p>Belum ada konten populer untuk ditampilkan.</p>
               </div>
+             @endforelse {{-- Akhir loop popularPosts --}}
 
-              <!-- Top 3 Article -->
-              <div class="dashboard-card relative">
-                <span class="absolute -top-2 -right-2 bg-amber-700 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                  #3 Top
-                </span>
-                <div class="flex justify-between items-start mb-4">
-                  <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">Health</span>
-                  <div class="unggahan-dropdown">
-                    <button class="unggahan-dropdown-toggle" onclick="unggahanToggleDropdown(this)">
-                      <i class="fas fa-ellipsis-v text-gray-400 hover:text-gray-600"></i>
-                    </button>
-                    <div class="unggahan-dropdown-menu">
-                      <div class="unggahan-dropdown-item" onclick="unggahanEditArticle(3)">
-                        <i class="fas fa-edit unggahan-dropdown-icon"></i>Edit
-                      </div>
-                      <div class="unggahan-dropdown-item unggahan-dropdown-danger" onclick="unggahanDeleteArticle(3)">
-                        <i class="fas fa-trash unggahan-dropdown-icon"></i>Hapus
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-3">Mobile Clinics Deployed</h3>
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">Emergency medical teams provide care to remote areas affected by the conflict.</p>
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                  <div class="flex items-center space-x-4">
-                    <span class="flex items-center">
-                      <i class="far fa-eye mr-1"></i> 845
-                    </span>
-                    <span class="flex items-center">
-                      <i class="far fa-heart mr-1"></i> 162
-                    </span>
-                  </div>
-                  <span>3 days ago</span>
-                </div>
-              </div>
             </div>
           </div>
 
           <!-- All Articles Section -->
           <div>
+            <!-- Filter -->
             <div class="flex items-center justify-between mb-6">
               <h2 class="text-2xl font-bold text-gray-900">Semua Unggahan Anda</h2>
               <div class="flex space-x-2">
-                <button class="dashboard-filter-button active">Semua</button>
-                <button class="dashboard-filter-button">Populer</button>
-                <button class="dashboard-filter-button">Terbaru</button>
+                  {{-- Tombol Semua --}}
+                  {{-- Aktif jika TIDAK ada filter 'populer' atau 'terbaru' --}}
+                  <a href="{{ route('dashboard.unggahan') }}" 
+                     class="dashboard-filter-button {{ !request()->filled('filter') || !in_array(request('filter'), ['populer', 'terbaru']) ? 'active' : '' }}">
+                     Semua
+                  </a>
+
+                  {{-- Tombol Populer --}}
+                  <a href="{{ route('dashboard.unggahan', ['filter' => 'populer']) }}" 
+                     class="dashboard-filter-button {{ request('filter') === 'populer' ? 'active' : '' }}">
+                     Populer
+                  </a>
+
+                  {{-- Tombol Terbaru --}}
+                  <a href="{{ route('dashboard.unggahan', ['filter' => 'terbaru']) }}" 
+                     class="dashboard-filter-button {{ request('filter') === 'terbaru' ? 'active' : '' }}">
+                     Terbaru
+                  </a>
               </div>
             </div>
-            
+            <!-- end filter -->
+
+            <!-- Article dan video -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <!-- Article 1 -->
+              @forelse ($posts as $post)
               <div class="dashboard-card">
                 <div class="flex justify-between items-start mb-4">
-                  <span class="dashboard-badge-premium">Humanitarian Crisis</span>
+                  <span class="dashboard-badge-premium">{{ explode(',', $post->topik_utama)[0] }}</span>
                   <div class="unggahan-dropdown">
                     <button class="unggahan-dropdown-toggle" onclick="unggahanToggleDropdown(this)">
                       <i class="fas fa-ellipsis-v text-gray-400 hover:text-gray-600"></i>
@@ -213,201 +189,45 @@
                       <div class="unggahan-dropdown-item" onclick="unggahanEditArticle(4)">
                         <i class="fas fa-edit unggahan-dropdown-icon"></i>Edit
                       </div>
-                      <div class="unggahan-dropdown-item unggahan-dropdown-danger" onclick="unggahanDeleteArticle(4)">
-                        <i class="fas fa-trash unggahan-dropdown-icon"></i>Hapus
-                      </div>
+                      <form action="{{ route('posts.destroy', $post) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menghapus konten ini?');" class="w-full">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="unggahan-dropdown-item unggahan-dropdown-danger block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                <i class="fas fa-trash unggahan-dropdown-icon mr-2"></i>Hapus
+                            </button>
+                        </form>
                     </div>
                   </div>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-3">International Aid Reaches</h3>
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">First humanitarian convoy in weeks through Rafah crossing amid cease negotiations.</p>
+                <h3 class="text-lg font-bold text-gray-900 mb-3">{{ $post->judul }}</h3>
+                <p class="text-gray-600 text-sm mb-4 leading-relaxed">{{ Str::words(strip_tags($post->isi), 15, '...') }}</p>
                 <div class="flex items-center justify-between text-sm text-gray-500">
                   <div class="flex items-center space-x-4">
                     <span class="flex items-center">
-                      <i class="far fa-eye mr-1"></i> 720
+                      <i class="far fa-eye mr-1"></i> {{ $post->views_count ?? 0 }}
                     </span>
                     <span class="flex items-center">
-                      <i class="far fa-heart mr-1"></i> 135
+                      <i class="far fa-heart mr-1"></i> {{ $post->likes_count ?? 0 }}
                     </span>
                   </div>
-                  <span>4 days ago</span>
+                  <span>{{ $post->created_at->diffForHumans() }}</span>
                 </div>
               </div>
+            @empty
+              {{-- Pesan jika tidak ada postingan sama sekali --}}
+              <div class="md:col-span-2 lg:col-span-3 text-center py-10 text-gray-500 bg-gray-50 rounded-lg">
+                  <p>Anda belum membuat unggahan apapun.</p>
+              </div>
+            @endforelse
 
-              <!-- Article 2 -->
-              <div class="dashboard-card">
-                <div class="flex justify-between items-start mb-4">
-                  <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Education</span>
-                  <div class="unggahan-dropdown">
-                    <button class="unggahan-dropdown-toggle" onclick="unggahanToggleDropdown(this)">
-                      <i class="fas fa-ellipsis-v text-gray-400 hover:text-gray-600"></i>
-                    </button>
-                    <div class="unggahan-dropdown-menu">
-                      <div class="unggahan-dropdown-item" onclick="unggahanEditArticle(5)">
-                        <i class="fas fa-edit unggahan-dropdown-icon"></i>Edit
-                      </div>
-                      <div class="unggahan-dropdown-item unggahan-dropdown-danger" onclick="unggahanDeleteArticle(5)">
-                        <i class="fas fa-trash unggahan-dropdown-icon"></i>Hapus
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-3">Education Support Programs</h3>
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">New initiatives to support Palestinian students affected by the conflict.</p>
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                  <div class="flex items-center space-x-4">
-                    <span class="flex items-center">
-                      <i class="far fa-eye mr-1"></i> 650
-                    </span>
-                    <span class="flex items-center">
-                      <i class="far fa-heart mr-1"></i> 120
-                    </span>
-                  </div>
-                  <span>5 days ago</span>
-                </div>
-              </div>
-
-              <!-- Article 3 -->
-              <div class="dashboard-card">
-                <div class="flex justify-between items-start mb-4">
-                  <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">Health</span>
-                  <div class="unggahan-dropdown">
-                    <button class="unggahan-dropdown-toggle" onclick="unggahanToggleDropdown(this)">
-                      <i class="fas fa-ellipsis-v text-gray-400 hover:text-gray-600"></i>
-                    </button>
-                    <div class="unggahan-dropdown-menu">
-                      <div class="unggahan-dropdown-item" onclick="unggahanEditArticle(6)">
-                        <i class="fas fa-edit unggahan-dropdown-icon"></i>Edit
-                      </div>
-                      <div class="unggahan-dropdown-item unggahan-dropdown-danger" onclick="unggahanDeleteArticle(6)">
-                        <i class="fas fa-trash unggahan-dropdown-icon"></i>Hapus
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-3">Mental Health Support</h3>
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">Counseling services expanded for trauma victims in conflict areas.</p>
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                  <div class="flex items-center space-x-4">
-                    <span class="flex items-center">
-                      <i class="far fa-eye mr-1"></i> 580
-                    </span>
-                    <span class="flex items-center">
-                      <i class="far fa-heart mr-1"></i> 98
-                    </span>
-                  </div>
-                  <span>1 week ago</span>
-                </div>
-              </div>
-
-              <!-- Additional Articles -->
-              <div class="dashboard-card">
-                <div class="flex justify-between items-start mb-4">
-                  <span class="dashboard-badge-premium">Humanitarian Crisis</span>
-                  <div class="unggahan-dropdown">
-                    <button class="unggahan-dropdown-toggle" onclick="unggahanToggleDropdown(this)">
-                      <i class="fas fa-ellipsis-v text-gray-400 hover:text-gray-600"></i>
-                    </button>
-                    <div class="unggahan-dropdown-menu">
-                      <div class="unggahan-dropdown-item" onclick="unggahanEditArticle(7)">
-                        <i class="fas fa-edit unggahan-dropdown-icon"></i>Edit
-                      </div>
-                      <div class="unggahan-dropdown-item unggahan-dropdown-danger" onclick="unggahanDeleteArticle(7)">
-                        <i class="fas fa-trash unggahan-dropdown-icon"></i>Hapus
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-3">Food Distribution Update</h3>
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">Latest updates on food aid distribution in affected regions.</p>
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                  <div class="flex items-center space-x-4">
-                    <span class="flex items-center">
-                      <i class="far fa-eye mr-1"></i> 520
-                    </span>
-                    <span class="flex items-center">
-                      <i class="far fa-heart mr-1"></i> 85
-                    </span>
-                  </div>
-                  <span>1 week ago</span>
-                </div>
-              </div>
-
-              <div class="dashboard-card">
-                <div class="flex justify-between items-start mb-4">
-                  <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Education</span>
-                  <div class="unggahan-dropdown">
-                    <button class="unggahan-dropdown-toggle" onclick="unggahanToggleDropdown(this)">
-                      <i class="fas fa-ellipsis-v text-gray-400 hover:text-gray-600"></i>
-                    </button>
-                    <div class="unggahan-dropdown-menu">
-                      <div class="unggahan-dropdown-item" onclick="unggahanEditArticle(8)">
-                        <i class="fas fa-edit unggahan-dropdown-icon"></i>Edit
-                      </div>
-                      <div class="unggahan-dropdown-item unggahan-dropdown-danger" onclick="unggahanDeleteArticle(8)">
-                        <i class="fas fa-trash unggahan-dropdown-icon"></i>Hapus
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-3">Online Learning Initiative</h3>
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">Digital platforms for continuous education during crisis.</p>
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                  <div class="flex items-center space-x-4">
-                    <span class="flex items-center">
-                      <i class="far fa-eye mr-1"></i> 480
-                    </span>
-                    <span class="flex items-center">
-                      <i class="far fa-heart mr-1"></i> 76
-                    </span>
-                  </div>
-                  <span>2 weeks ago</span>
-                </div>
-              </div>
-
-              <div class="dashboard-card">
-                <div class="flex justify-between items-start mb-4">
-                  <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">Health</span>
-                  <div class="unggahan-dropdown">
-                    <button class="unggahan-dropdown-toggle" onclick="unggahanToggleDropdown(this)">
-                      <i class="fas fa-ellipsis-v text-gray-400 hover:text-gray-600"></i>
-                    </button>
-                    <div class="unggahan-dropdown-menu">
-                      <div class="unggahan-dropdown-item" onclick="unggahanEditArticle(9)">
-                        <i class="fas fa-edit unggahan-dropdown-icon"></i>Edit
-                      </div>
-                      <div class="unggahan-dropdown-item unggahan-dropdown-danger" onclick="unggahanDeleteArticle(9)">
-                        <i class="fas fa-trash unggahan-dropdown-icon"></i>Hapus
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-3">Medical Supply Update</h3>
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">Current status of medical supplies in healthcare facilities.</p>
-                <div class="flex items-center justify-between text-sm text-gray-500">
-                  <div class="flex items-center space-x-4">
-                    <span class="flex items-center">
-                      <i class="far fa-eye mr-1"></i> 420
-                    </span>
-                    <span class="flex items-center">
-                      <i class="far fa-heart mr-1"></i> 65
-                    </span>
-                  </div>
-                  <span>2 weeks ago</span>
-                </div>
-              </div>
             </div>
 
             <!-- Pagination -->
             <div class="unggahan-pagination mt-8">
-              <nav class="unggahan-pagination-nav">
-                <a href="#" class="unggahan-pagination-link unggahan-pagination-prev">Previous</a>
-                <a href="#" class="unggahan-pagination-link unggahan-pagination-active">1</a>
-                <a href="#" class="unggahan-pagination-link">2</a>
-                <a href="#" class="unggahan-pagination-link">3</a>
-                <a href="#" class="unggahan-pagination-link unggahan-pagination-next">Next</a>
-              </nav>
+              {{ $posts->links() }}
             </div>
+            <!-- end pagination -->
+
           </div>
         </div>
       </div>

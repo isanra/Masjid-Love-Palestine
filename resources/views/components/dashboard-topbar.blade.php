@@ -1,4 +1,3 @@
-<!-- ========================= Topbar ==================== -->
 <div class="dashboard-topbar">
     <div class="dashboard-toggle">
         <i class="fas fa-bars dashboard-toggle-icon"></i>
@@ -11,11 +10,26 @@
         </label>
     </div>
 
-    <div class="dashboard-user">
+    <a href="{{ route('profile.show', Auth::user()) }}" class="dashboard-user" title="Lihat Profil Publik">
+        @php
+            $userPhotoPath = Auth::user()->profile?->foto_profil; // Path dari DB, misal: 'profile-photos/foto.jpg'
+            $defaultPhotoPath = 'profile-photos/default.jpg';    // Path default Anda
+
+            if ($userPhotoPath && file_exists(public_path($userPhotoPath))) {
+                // 1. Gunakan foto spesifik user jika ada di folder public
+                $photoUrl = asset($userPhotoPath);
+            } else if (file_exists(public_path($defaultPhotoPath))) {
+                // 2. Jika tidak ada, gunakan foto default dari folder public
+                $photoUrl = asset($defaultPhotoPath);
+            } else {
+                // 3. Jika semua gagal, gunakan placeholder lama
+                $photoUrl = asset('images/placeholder.png'); 
+            }
+        @endphp
         <img
-            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1160&q=80"
-            alt="User"
+            src="{{ $photoUrl }}"
+            alt="{{ Auth::user()->nama }}"
             class="dashboard-user-image"
         />
-    </div>
+    </a>
 </div>

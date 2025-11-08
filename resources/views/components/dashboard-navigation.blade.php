@@ -2,7 +2,7 @@
 <div class="dashboard-navigation">
     <ul class="dashboard-navigation-list">
         <li class="dashboard-nav-logo">
-            <a href="#" class="dashboard-nav-link">
+            <a href="{{ route('welcome') }}" class="dashboard-nav-link">
                 <span class="dashboard-nav-icon">
                     <img src="{{ asset('images/logo2.png') }}" alt="Logo" class="w-12 h-12 object-contain">
                 </span>
@@ -20,9 +20,9 @@
             </a>
         </li>
         
-        <li class="dashboard-nav-item {{ request()->routeIs('unggahan') ? 'dashboard-active' : '' }}" id="postNav">
+        <li class="dashboard-nav-item {{ request()->routeIs('dashboard.unggahan') ? 'dashboard-active' : '' }}" id="postNav">
             <div class="dashboard-hover-effect"></div>
-            <a href="{{ route('unggahan') }}" class="dashboard-nav-link">
+            <a href="{{ route('dashboard.unggahan') }}" class="dashboard-nav-link">
                 <span class="dashboard-nav-icon">
                     <i class="fas fa-newspaper dashboard-icon"></i>
                 </span>
@@ -30,9 +30,9 @@
             </a>
         </li>
         
-        <li class="dashboard-nav-item {{ request()->routeIs('redeem') ? 'dashboard-active' : '' }}" id="redeemNav">
+        <li class="dashboard-nav-item {{ request()->routeIs('redeem.index') ? 'dashboard-active' : '' }}" id="redeemNav">
             <div class="dashboard-hover-effect"></div>
-            <a href="{{ route('redeem') }}" class="dashboard-nav-link">
+            <a href="{{ route('redeem.index') }}" class="dashboard-nav-link">
                 <span class="dashboard-nav-icon">
                     <i class="fas fa-gift dashboard-icon"></i>
                 </span>
@@ -40,9 +40,9 @@
             </a>
         </li>
         
-        <li class="dashboard-nav-item {{ request()->routeIs('profile.edit') ? 'dashboard-active' : '' }}" id="accountNav">
+        <li class="dashboard-nav-item {{ request()->routeIs('dashboard.profile-edit') ? 'dashboard-active' : '' }}" id="accountNav">
             <div class="dashboard-hover-effect"></div>
-            <a href="{{ route('profile-edit') }}" class="dashboard-nav-link">
+            <a href="{{ route('profile.edit') }}" class="dashboard-nav-link">
                 <span class="dashboard-nav-icon">
                     <i class="fas fa-user dashboard-icon"></i>
                 </span>

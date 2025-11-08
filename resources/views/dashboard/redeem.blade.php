@@ -17,6 +17,23 @@
       <!-- =============== Navigation ================ -->
       @include('components.dashboard-navigation')
 
+      <!-- notif sukses -->
+       <div class="dashboard-content">
+
+            @if (session('success'))
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg" role="alert">
+                    <p classs="font-bold">Sukses</p>
+                    <p>{{ session('success') }}</p>
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-lg" role="alert">
+                    <p class="font-bold">Gagal</p>
+                    <p>{{ session('error') }}</p>
+                </div>
+            @endif
+        <div class="mb-8">
+
       <!-- ========================= Main ==================== -->
       <div class="dashboard-main-content">
         @include('components.dashboard-topbar') 
@@ -32,157 +49,66 @@
               </div>
               <div class="dashboard-card mt-4 md:mt-0 p-4 bg-green-50 border border-green-200">
                 <p class="text-sm text-gray-600">Point Anda</p>
-                <p class="text-2xl font-bold text-green-800">1,250</p>
+                <p class="text-2xl font-bold text-green-800">{{ $user->profile?->poin ?? 0 }}</p>
               </div>
             </div>
           </div>
 
           <!-- Filter Options -->
           <div class="flex flex-wrap gap-2 mb-8">
-            <button class="dashboard-filter-button active">Semua</button>
-            <button class="dashboard-filter-button">Paket Makanan</button>
-            <button class="dashboard-filter-button">Obat-obatan</button>
-            <button class="dashboard-filter-button">Bantuan Pendidikan</button>
-            <button class="dashboard-filter-button">Bantuan Darurat</button>
+            <a href="{{ route('redeem.index') }}" 
+               class="dashboard-filter-button {{ !request('category') ? 'active' : '' }}">
+                Semua
+            </a>
+            
+            @foreach ($categories as $category)
+                <a href="{{ route('redeem.index', ['category' => $category]) }}"
+                   class="dashboard-filter-button {{ request('category') == $category ? 'active' : '' }}">
+                    {{ $category }}
+                </a>
+            @endforeach
           </div>
 
           <!-- Grid Items untuk Diredeem -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-            <!-- Item 1 -->
-            <div class="dashboard-card p-4 flex flex-col">
-              <div class="h-40 bg-gray-200 rounded-xl mb-4 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Paket Makanan" class="w-full h-full object-cover" />
-              </div>
-              <h3 class="font-semibold text-lg mb-2 text-gray-900">Paket Makanan Darurat</h3>
-              <p class="text-gray-600 text-sm mb-4 leading-relaxed">Paket makanan untuk keluarga selama 1 minggu</p>
-              <div class="mt-auto space-y-3">
-                <div class="text-center">
-                  <span class="font-bold text-green-800 text-lg block">500 points</span>
-                </div>
-                <button class="dashboard-button dashboard-button-primary w-full redeem-button" data-points="500" data-item="Paket Makanan Darurat">
-                  Redeem
-                </button>
-              </div>
-            </div>
 
-            <!-- Item 2 -->
-            <div class="dashboard-card p-4 flex flex-col">
-              <div class="h-40 bg-gray-200 rounded-xl mb-4 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Obat-obatan" class="w-full h-full object-cover" />
-              </div>
-              <h3 class="font-semibold text-lg mb-2 text-gray-900">Paket Obat-obatan</h3>
-              <p class="text-gray-600 text-sm mb-4 leading-relaxed">Paket P3K dan obat dasar untuk 10 keluarga</p>
-              <div class="mt-auto space-y-3">
-                <div class="text-center">
-                  <span class="font-bold text-green-800 text-lg block">750 points</span>
-                </div>
-                <button class="dashboard-button dashboard-button-primary w-full redeem-button" data-points="750" data-item="Paket Obat-obatan">
-                  Redeem
-                </button>
-              </div>
-            </div>
+              @forelse ($items as $item)
+                  <div class="dashboard-card p-4 flex flex-col">
+                      <div class="h-40 bg-gray-200 rounded-xl mb-4 overflow-hidden">
+                          {{-- Kita akan gunakan placeholder jika tidak ada gambar --}}
+                          <img src="{{ $item->image_url ?? 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=400&q=80' }}" alt="{{ $item->name }}" class="w-full h-full object-cover" />
+                      </div>
+                      <h3 class="font-semibold text-lg mb-2 text-gray-900">{{ $item->name }}</h3>
+                      <p class="text-gray-600 text-sm mb-4 leading-relaxed">{{ $item->description }}</p>
 
-            <!-- Item 3 -->
-            <div class="dashboard-card p-4 flex flex-col">
-              <div class="h-40 bg-gray-200 rounded-xl mb-4 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Pendidikan" class="w-full h-full object-cover" />
-              </div>
-              <h3 class="font-semibold text-lg mb-2 text-gray-900">Paket Pendidikan</h3>
-              <p class="text-gray-600 text-sm mb-4 leading-relaxed">Buku dan alat tulis untuk 5 anak sekolah</p>
-              <div class="mt-auto space-y-3">
-                <div class="text-center">
-                  <span class="font-bold text-green-800 text-lg block">600 points</span>
-                </div>
-                <button class="dashboard-button dashboard-button-primary w-full redeem-button" data-points="600" data-item="Paket Pendidikan">
-                  Redeem
-                </button>
-              </div>
-            </div>
+                      <div class="mt-auto space-y-3">
+                          <div class="text-center">
+                              <span class="font-bold text-green-800 text-lg block">{{ $item->points_cost }} points</span>
+                          </div>
 
-            <!-- Item 4 -->
-            <div class="dashboard-card p-4 flex flex-col">
-              <div class="h-40 bg-gray-200 rounded-xl mb-4 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1581578021517-5d8ad8597852?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Tenda" class="w-full h-full object-cover" />
-              </div>
-              <h3 class="font-semibold text-lg mb-2 text-gray-900">Tenda Pengungsi</h3>
-              <p class="text-gray-600 text-sm mb-4 leading-relaxed">Tenda untuk keluarga yang kehilangan rumah</p>
-              <div class="mt-auto space-y-3">
-                <div class="text-center">
-                  <span class="font-bold text-green-800 text-lg block">1200 points</span>
-                </div>
-                <button class="dashboard-button dashboard-button-primary w-full redeem-button" data-points="1200" data-item="Tenda Pengungsi">
-                  Redeem
-                </button>
-              </div>
-            </div>
+                          {{-- Tombol ini sekarang menggunakan form untuk mengirim data ke controller --}}
+                          <form action="{{ route('redeem.store') }}" method="POST">
+                              @csrf
+                              <input type="hidden" name="redeem_item_id" value="{{ $item->id }}">
 
-            <!-- Item 5 -->
-            <div class="dashboard-card p-4 flex flex-col">
-              <div class="h-40 bg-gray-200 rounded-xl mb-4 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1577896851231-70ef18861754?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Air Bersih" class="w-full h-full object-cover" />
-              </div>
-              <h3 class="font-semibold text-lg mb-2 text-gray-900">Air Bersih</h3>
-              <p class="text-gray-600 text-sm mb-4 leading-relaxed">Penyediaan air bersih untuk 20 keluarga</p>
-              <div class="mt-auto space-y-3">
-                <div class="text-center">
-                  <span class="font-bold text-green-800 text-lg block">450 points</span>
-                </div>
-                <button class="dashboard-button dashboard-button-primary w-full redeem-button" data-points="450" data-item="Air Bersih">
-                  Redeem
-                </button>
-              </div>
-            </div>
+                              @if (Auth::user()->profile->poin >= $item->points_cost)
+                                  <button type="submit" class="dashboard-button dashboard-button-primary w-full">
+                                      Redeem
+                                  </button>
+                              @else
+                                  <button type="button" class="dashboard-button w-full bg-gray-300 text-gray-500 cursor-not-allowed" disabled>
+                                      Poin Tidak Cukup
+                                  </button>
+                              @endif
+                          </form>
+                      </div>
+                  </div>
+              @empty
+                  <div class="col-span-full text-center text-gray-500 py-10">
+                      <p>Belum ada item hadiah yang tersedia saat ini.</p>
+                  </div>
+              @endforelse
 
-            <!-- Item 6 -->
-            <div class="dashboard-card p-4 flex flex-col">
-              <div class="h-40 bg-gray-200 rounded-xl mb-4 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1551884831-bbf3cdc6469e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Selimut" class="w-full h-full object-cover" />
-              </div>
-              <h3 class="font-semibold text-lg mb-2 text-gray-900">Selimut Hangat</h3>
-              <p class="text-gray-600 text-sm mb-4 leading-relaxed">Selimut untuk musim dingin (10 buah)</p>
-              <div class="mt-auto space-y-3">
-                <div class="text-center">
-                  <span class="font-bold text-green-800 text-lg block">400 points</span>
-                </div>
-                <button class="dashboard-button dashboard-button-primary w-full redeem-button" data-points="400" data-item="Selimut Hangat">
-                  Redeem
-                </button>
-              </div>
-            </div>
-
-            <!-- Item 7 -->
-            <div class="dashboard-card p-4 flex flex-col">
-              <div class="h-40 bg-gray-200 rounded-xl mb-4 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Bantuan Medis" class="w-full h-full object-cover" />
-              </div>
-              <h3 class="font-semibold text-lg mb-2 text-gray-900">Bantuan Medis</h3>
-              <p class="text-gray-600 text-sm mb-4 leading-relaxed">Dukungan biaya pengobatan untuk korban</p>
-              <div class="mt-auto space-y-3">
-                <div class="text-center">
-                  <span class="font-bold text-green-800 text-lg block">900 points</span>
-                </div>
-                <button class="dashboard-button dashboard-button-primary w-full redeem-button" data-points="900" data-item="Bantuan Medis">
-                  Redeem
-                </button>
-              </div>
-            </div>
-
-            <!-- Item 8 -->
-            <div class="dashboard-card p-4 flex flex-col">
-              <div class="h-40 bg-gray-200 rounded-xl mb-4 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Rebuild" class="w-full h-full object-cover" />
-              </div>
-              <h3 class="font-semibold text-lg mb-2 text-gray-900">Rebuild Palestine</h3>
-              <p class="text-gray-600 text-sm mb-4 leading-relaxed">Bantuan rekonstruksi rumah dan fasilitas</p>
-              <div class="mt-auto space-y-3">
-                <div class="text-center">
-                  <span class="font-bold text-green-800 text-lg block">1500 points</span>
-                </div>
-                <button class="dashboard-button dashboard-button-primary w-full redeem-button" data-points="1500" data-item="Rebuild Palestine">
-                  Redeem
-                </button>
-              </div>
-            </div>
           </div>
 
           <!-- Info Redeem -->
@@ -244,77 +170,6 @@
       </div>
     </div>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Initialize dashboard navigation jika ada
-        if (typeof window.dashboardApp !== 'undefined') {
-          window.dashboardApp.setActiveNavigation();
-        } else {
-          // Fallback navigation initialization
-          const toggle = document.querySelector('.dashboard-toggle');
-          const navigation = document.querySelector('.dashboard-navigation');
-          const main = document.querySelector('.dashboard-main-content');
-
-          if (toggle && navigation && main) {
-            toggle.addEventListener('click', function() {
-              navigation.classList.toggle('active');
-              main.classList.toggle('active');
-            });
-          }
-
-          // Set active navigation manually
-          document.getElementById('redeemNav')?.classList.add('active');
-        }
-
-        // Filter buttons functionality
-        const filterButtons = document.querySelectorAll('.dashboard-filter-button');
-        filterButtons.forEach(button => {
-          button.addEventListener('click', function() {
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-          });
-        });
-
-        // Modal functionality for redeem items
-        const redeemButtons = document.querySelectorAll(".redeem-button");
-        const redeemModal = document.getElementById("redeemModal");
-        const pointCostElement = document.getElementById("pointCost");
-        const itemNameElement = document.getElementById("itemName");
-        const cancelButton = document.getElementById("cancelRedeem");
-        const confirmButton = document.getElementById("confirmRedeem");
-
-        redeemButtons.forEach((button) => {
-          button.addEventListener("click", function () {
-            const pointCost = this.getAttribute("data-points");
-            const itemName = this.getAttribute("data-item");
-
-            pointCostElement.textContent = pointCost;
-            itemNameElement.textContent = itemName;
-
-            redeemModal.style.display = 'flex';
-          });
-        });
-
-        cancelButton.addEventListener("click", function () {
-          redeemModal.style.display = 'none';
-        });
-
-        confirmButton.addEventListener("click", function () {
-          // Here you would typically process the redeem transaction
-          const pointCost = pointCostElement.textContent;
-          const itemName = itemNameElement.textContent;
-          
-          alert(`Redeem berhasil! ${pointCost} points telah ditukar untuk "${itemName}". Terima kasih telah berkontribusi untuk Palestina.`);
-          redeemModal.style.display = 'none';
-        });
-
-        // Close modal when clicking outside
-        window.addEventListener("click", function (event) {
-          if (event.target === redeemModal) {
-            redeemModal.style.display = 'none';
-          }
-        });
-      });
-    </script>
+    
   </body>
 </html>

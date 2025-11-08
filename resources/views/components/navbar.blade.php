@@ -25,6 +25,33 @@
         <!-- Auth Buttons -->
         <div class="flex items-center space-x-3">
             @auth
+                {{-- ======================================================= --}}
+                {{-- BARU: Link Profil Pengguna (Desktop) --}}
+                {{-- ======================================================= --}}
+                @php
+                    // Logika untuk mendapatkan URL foto profil
+                    $defaultPhotoPath = 'profile-photos/default.jpg';
+                    $userPhotoPath = Auth::user()->profile?->foto_profil;
+                    $photoUrl = asset('images/placeholder.png'); // Fallback
+
+                    if ($userPhotoPath && Storage::disk('public')->exists($userPhotoPath)) {
+                        $photoUrl = Storage::url($userPhotoPath);
+                    } elseif (Storage::disk('public')->exists($defaultPhotoPath)) {
+                        $photoUrl = Storage::url($defaultPhotoPath);
+                    }
+                @endphp
+                
+                @if (Auth::user()->role === 'masjid')
+                    <a href="{{ route('dashboard') }}" title="Buka Dashboard">
+                        <img src="{{ $photoUrl }}" alt="Profil" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm transition-transform duration-300 transform hover:scale-110">
+                    </a>
+                @else
+                    <a href="{{ route('user-profile.show', Auth::user()) }}" title="Lihat Profil">
+                        <img src="{{ $photoUrl }}" alt="Profil" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm transition-transform duration-300 transform hover:scale-110">
+                    </a>
+                @endif
+                {{-- ======================================================= --}}
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg text-sm">
@@ -93,6 +120,35 @@
                 <!-- Auth Buttons in Sidebar -->
                 <div class="mt-auto pb-8 space-y-3">
                     @auth
+                        {{-- ======================================================= --}}
+                        {{-- BARU: Link Profil Pengguna (Mobile) --}}
+                        {{-- ======================================================= --}}
+                        @php
+                            // Logika untuk mendapatkan URL foto profil
+                            $defaultPhotoPath = 'profile-photos/default.jpg';
+                            $userPhotoPath = Auth::user()->profile?->foto_profil;
+                            $photoUrl = asset('images/placeholder.png'); // Fallback
+                                        
+                            if ($userPhotoPath && Storage::disk('public')->exists($userPhotoPath)) {
+                                $photoUrl = Storage::url($userPhotoPath);
+                            } elseif (Storage::disk('public')->exists($defaultPhotoPath)) {
+                                $photoUrl = Storage::url($defaultPhotoPath);
+                            }
+                        @endphp
+                        
+                        @if (Auth::user()->role === 'masjid')
+                            <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 text-white hover:text-gray-300 transition-all duration-300 group py-2">
+                                <img src="{{ $photoUrl }}" alt="Profil" class="w-10 h-10 rounded-full object-cover border-2 border-white/50">
+                                <span class="text-lg font-medium">Dashboard</span>
+                            </a>
+                        @else
+                            <a href="{{ route('user-profile.show', Auth::user()) }}" class="flex items-center space-x-3 text-white hover:text-gray-300 transition-all duration-300 group py-2">
+                                <img src="{{ $photoUrl }}" alt="Profil" class="w-10 h-10 rounded-full object-cover border-2 border-white/50">
+                                <span class="text-lg font-medium">Profil Saya</span>
+                            </a>
+                        @endif
+                        {{-- ======================================================= --}}
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2.5 rounded-xl font-medium transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg">
@@ -116,7 +172,7 @@
 </nav>
 
 <!-- Spacer untuk konten di bawah fixed navbar -->
-<div class="h-12 md:h-16"></div>
+<div class="h-20 md:h-24"></div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
