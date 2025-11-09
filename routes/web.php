@@ -53,6 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // --- Fitur Postingan ---
     Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+    Route::resource('posts', PostController::class);
     Route::post('/posts/{post}/like', [PostController::class, 'toggleLike'])->name('posts.like');
     Route::post('/posts/{post}/save', [PostController::class, 'toggleSave'])->name('posts.save');
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('posts.comments.store');
