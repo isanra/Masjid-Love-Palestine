@@ -55,12 +55,7 @@
                 @endif
                 {{-- ======================================================= --}}
 
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit" class="bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg text-sm">
-                        Logout
-                    </button>
-                </form>
+                
             @else
                 <a href="{{ route('login') }}">
                     <button class="bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg text-sm">
