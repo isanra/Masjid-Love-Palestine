@@ -51,6 +51,7 @@
                 <div class="flex flex-col md:flex-row">
                     <!-- Thumbnail di Kiri -->
                     <div class="md:w-2/5">
+                      
                         @php
                             $hotThumbnailUrl = Str::startsWith($hottestPostToday->thumbnail, 'http')
                                 ? $hottestPostToday->thumbnail
@@ -87,10 +88,17 @@
                         <div class="flex items-center justify-between border-t pt-4 mt-4">
                              <!-- Penulis -->
                             <div class="flex items-center text-sm text-gray-700">
-                                <img src="{{ $hottestPostToday->user->profile?->foto_profil ? Storage::url($hottestPostToday->user->profile->foto_profil) : asset('images/profile.png') }}" 
-                                     alt="{{ $hottestPostToday->user->name }}" class="w-8 h-8 rounded-full mr-3 object-cover" />
+                                @php
+                                    $photoPath = $hottestPostToday->user->profile?->foto_profil;
+                                    // KITA PAKSA PAKAI ASSET() LANGSUNG
+                                    $authorPhotoUrl = $photoPath ? asset($photoPath) : asset('images/profile.png');
+                                @endphp
+
+                                <img src="{{ $authorPhotoUrl }}" alt="{{ $hottestPostToday->user->name ?? 'Penulis' }}" class="w-8 h-8 rounded-full mr-3 object-cover" />
                                 <span>Oleh <span class="font-semibold">{{ $hottestPostToday->user->name }}</span></span>
+                                
                             </div>
+                            
                             <!-- Stats -->
                             <div class="flex items-center space-x-4 text-gray-500 text-sm">
                                 <div class="flex items-center" title="Views Hari Ini">
